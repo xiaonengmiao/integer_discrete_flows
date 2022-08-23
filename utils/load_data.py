@@ -190,8 +190,8 @@ def load_imagenet(resolution, args, **kwargs):
 
     args.input_size = [3, resolution, resolution]
 
-    trainpath = '../imagenet{res}/train_{res}x{res}.tar'.format(res=resolution)
-    valpath = '../imagenet{res}/valid_{res}x{res}.tar'.format(res=resolution)
+    trainpath = './data/imagenet{res}/train_{res}x{res}.tar'.format(res=resolution)
+    valpath = './data/imagenet{res}/val_{res}x{res}.tar'.format(res=resolution)
 
     trainpath = extract_tar(trainpath)
     valpath = extract_tar(valpath)
@@ -261,4 +261,4 @@ if __name__ == '__main__':
     class Args():
         def __init__(self):
             self.batch_size = 128
-    train_loader, val_loader, test_loader, args = load_imagenet32(Args())
+    train_loader, val_loader, test_loader, args = load_imagenet(64, Args())

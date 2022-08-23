@@ -132,7 +132,7 @@ parser.add_argument('--gpu_num', type=int, default=0, metavar='GPU',
                     help='choose GPU to run on.')
 
 args = parser.parse_args()
-args.cuda = not args.no_cuda and torch.cuda.is_available()
+args.cuda = not args.no_cuda and (torch.cuda.is_available() or torch.backends.mps.is_available())
 
 if args.manual_seed is None:
     args.manual_seed = random.randint(1, 100000)
@@ -141,7 +141,7 @@ torch.manual_seed(args.manual_seed)
 np.random.seed(args.manual_seed)
 
 
-kwargs = {'num_workers': 4, 'pin_memory': True} if args.cuda else {}
+kwargs = {'num_workers': 4, 'pin_memory': False} if args.cuda else {}
 
 
 def run(args, kwargs):
@@ -190,7 +190,7 @@ def run(args, kwargs):
     import models.Model as Model
 
     model = Model.Model(args)
-    args.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    args.device = torch.device("cuda:0" if torch.cuda.is_available() else "mps" if torch.has_mps else "cpu")
     model.set_temperature(args.temperature)
     model.enable_hard_round(args.hard_round)
 
