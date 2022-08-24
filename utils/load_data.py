@@ -190,6 +190,8 @@ def load_imagenet(resolution, args, **kwargs):
 
     args.input_size = [3, resolution, resolution]
 
+    # wget https://pjreddie.com/media/files/imagenet64.tar
+    # tar -xf imagenet64.tar
     trainpath = './data/imagenet{res}/train_{res}x{res}.tar'.format(res=resolution)
     valpath = './data/imagenet{res}/val_{res}x{res}.tar'.format(res=resolution)
 
@@ -200,11 +202,18 @@ def load_imagenet(resolution, args, **kwargs):
         ToTensorNoNorm()
     ])
 
+    transform_train = transforms.Compose([
+        transforms.Resize(64), # Take images smaller than 64 and enlarges them
+        transforms.RandomCrop(64, padding=4, padding_mode='edge'), # Take 64x64 crops from 72x72 padding images
+        transforms.RandomHorizontalFlip(), # 50% of time flip image along y-axis
+        ToTensorNoNorm()
+    ])
+
     print('Starting loading ImageNet')
 
     imagenet_data = torchvision.datasets.ImageFolder(
         trainpath,
-        transform=data_transform)
+        transform=transform_train)
 
     print('Number of data images', len(imagenet_data))
 
@@ -243,6 +252,60 @@ def load_imagenet(resolution, args, **kwargs):
     return train_loader, val_loader, test_loader, args
 
 
+def load_tiny_imagenet(resolution, args, **kwargs):
+    assert resolution == 64
+
+    args.input_size = [3, resolution, resolution]
+
+    trainpath   = './data/tiny-imagenet-200/train/'
+    valpath     = './data/tiny-imagenet-200/val/'
+    testpath    = './data/tiny-imagenet-200/test/'
+
+    data_transform = transforms.Compose([
+        ToTensorNoNorm()
+    ])
+
+    print('Starting loading ImageNet')
+
+    train_dataset = torchvision.datasets.ImageFolder(
+        trainpath,
+        transform=data_transform)
+
+    print('Number of data images', len(train_dataset))
+
+    train_loader = torch.utils.data.DataLoader(
+        train_dataset,
+        batch_size=args.batch_size,
+        shuffle=True,
+        **kwargs)
+
+    val_dataset = torchvision.datasets.ImageFolder(
+        valpath,
+        transform=data_transform)
+
+    print('Number of val images:', len(val_dataset))
+
+    val_loader = torch.utils.data.DataLoader(
+        val_dataset,
+        batch_size=args.batch_size,
+        shuffle=False,
+        **kwargs)
+
+    test_dataset = torchvision.datasets.ImageFolder(
+        testpath,
+        transform=data_transform)
+
+    print('Number of test images:', len(test_dataset))
+
+    test_loader = torch.utils.data.DataLoader(
+        test_dataset,
+        batch_size=args.batch_size,
+        shuffle=False,
+        **kwargs)
+
+    return train_loader, val_loader, test_loader, args
+
+
 def load_dataset(args, **kwargs):
 
     if args.dataset == 'cifar10':
@@ -251,6 +314,8 @@ def load_dataset(args, **kwargs):
         train_loader, val_loader, test_loader, args = load_imagenet(32, args, **kwargs)
     elif args.dataset == 'imagenet64':
         train_loader, val_loader, test_loader, args = load_imagenet(64, args, **kwargs)
+    elif args.dataset == 'tiny-imagenet-200':
+        train_loader, val_loader, test_loader, args = load_tiny_imagenet(64, args, **kwargs)
     else:
         raise Exception('Wrong name of the dataset!')
 

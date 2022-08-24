@@ -20,8 +20,8 @@ from utils.load_data import load_dataset
 
 parser = argparse.ArgumentParser(description='PyTorch Discrete Normalizing flows')
 
-parser.add_argument('-d', '--dataset', type=str, default='cifar10',
-                    choices=['cifar10', 'imagenet32', 'imagenet64'],
+parser.add_argument('-d', '--dataset', type=str, default='tiny-imagenet-200',
+                    choices=['cifar10', 'imagenet32', 'imagenet64', 'tiny-imagenet-200'],
                     metavar='DATASET',
                     help='Dataset choice.')
 
@@ -132,7 +132,8 @@ parser.add_argument('--gpu_num', type=int, default=0, metavar='GPU',
                     help='choose GPU to run on.')
 
 args = parser.parse_args()
-args.cuda = not args.no_cuda and (torch.cuda.is_available() or torch.backends.mps.is_available())
+args.cuda = not args.no_cuda and torch.cuda.is_available()
+args.mps = not args.cuda and torch.backends.mps.is_available()
 
 if args.manual_seed is None:
     args.manual_seed = random.randint(1, 100000)
@@ -141,7 +142,7 @@ torch.manual_seed(args.manual_seed)
 np.random.seed(args.manual_seed)
 
 
-kwargs = {'num_workers': 4, 'pin_memory': False} if args.cuda else {}
+kwargs = {'num_workers': 4, 'pin_memory': True} if args.cuda else {'num_workers': 4, 'pin_memory': False} if args.mps else {}
 
 
 def run(args, kwargs):
