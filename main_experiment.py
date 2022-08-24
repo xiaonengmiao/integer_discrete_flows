@@ -212,7 +212,7 @@ def run(args, kwargs):
     model.to(args.device)
 
     def lr_lambda(epoch):
-        return min(1., (epoch+1) / args.warmup) * np.power(args.lr_decay, epoch)
+        return min(1., (epoch + 1) / args.warmup) * np.power(args.lr_decay, epoch)
     optimizer = optim.Adamax(model.parameters(), lr=args.learning_rate, eps=1.e-7)
     scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda, last_epoch=-1)
 
@@ -237,8 +237,8 @@ def run(args, kwargs):
         scheduler.step()
         tr_loss, tr_bpd = train(epoch, train_loader, model, optimizer, args)
         train_bpd.append(tr_bpd)
-        train_times.append(time.time()-t_start)
-        print('One training epoch took %.2f seconds' % (time.time()-t_start))
+        train_times.append(time.time() - t_start)
+        print('One training epoch took %.2f seconds' % (time.time() - t_start))
 
         if epoch < 25 or epoch % args.evaluate_interval_epochs == 0:
             v_loss, v_bpd = evaluate(

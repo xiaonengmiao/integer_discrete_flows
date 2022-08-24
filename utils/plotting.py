@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib
 # noninteractive background
 matplotlib.use('Agg')
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt  # noqa: E402
 
 
 def plot_training_curve(train_loss, validation_loss, fname='training_curve.pdf', labels=None):

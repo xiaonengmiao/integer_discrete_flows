@@ -6,7 +6,7 @@ This repository contains the code for the experiments presented in [1].
 
 ### CIFAR10 setup:
 ```
-python main_experiment.py --n_flows 8 --n_levels 3 --n_channels 512 --coupling_type 'densenet' --densenet_depth 12 —n_mixtures 5 —splitprior_type ‘densenet’
+python main_experiment.py --n_flows 8 --n_levels 3 --n_channels 512 --coupling_type 'densenet' --densenet_depth 12 --n_mixtures 5 --splitprior_type 'densenet'
 ```
 
 
@@ -20,6 +20,13 @@ python main_experiment.py --evaluate_interval_epochs 5 --n_flows 8 --n_levels 3 
 ```
 python main_experiment.py --evaluate_interval_epochs 1 --n_flows 8 --n_levels 4 --n_channels 512 --n_mixtures 5 --densenet_depth 12 --coupling_type 'densenet' --splitprior_type 'densenet' --dataset 'imagenet64' --epochs 20 --lr_decay 0.99 --batch_size 64
 ```
+
+
+### Tiny ImageNet 200 setup:
+```
+python main_experiment.py --evaluate_interval_epochs 1 --n_flows 8 --n_levels 4 --n_channels 512 --n_mixtures 5 --densenet_depth 12 --coupling_type 'densenet' --splitprior_type 'densenet' --dataset 'tiny-imagenet-200' --epochs 20 --lr_decay 0.99 --batch_size 64
+```
+
 
 # Acknowledgements
 The Robert Bosch GmbH is acknowledged for financial support.

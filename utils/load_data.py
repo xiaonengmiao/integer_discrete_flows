@@ -9,7 +9,6 @@ from scipy.io import loadmat
 
 import numpy as np
 
-import os
 from torch.utils.data import Dataset
 import torchvision
 from torchvision import transforms
@@ -27,7 +26,7 @@ import tarfile
 
 class ToTensorNoNorm():
     def __call__(self, X_i):
-        return torch.from_numpy(np.array(X_i, copy=False)).permute(2, 0, 1)
+        return torch.from_numpy(np.array(X_i, copy=True)).permute(2, 0, 1)
 
 
 class PadToMultiple(object):
@@ -77,8 +76,6 @@ class CustomTensorDataset(Dataset):
         self.transform = transform
 
     def __getitem__(self, index):
-        from PIL import Image
-
         X, y = self.tensors
         X_i, y_i, = X[index], y[index]
 
@@ -109,21 +106,21 @@ def load_cifar10(args, **kwargs):
 
     if args.data_augmentation_level == 2:
         data_transform = transforms.Compose([
-                transforms.ToPILImage(),
-                transforms.RandomHorizontalFlip(),
-                transforms.Pad(int(math.ceil(32 * 0.05)), padding_mode='edge'),
-                transforms.RandomAffine(degrees=0, translate=(0.05, 0.05)),
-                transforms.CenterCrop(32)
-            ])
+            transforms.ToPILImage(),
+            transforms.RandomHorizontalFlip(),
+            transforms.Pad(int(math.ceil(32 * 0.05)), padding_mode='edge'),
+            transforms.RandomAffine(degrees=0, translate=(0.05, 0.05)),
+            transforms.CenterCrop(32)
+        ])
     elif args.data_augmentation_level == 1:
         data_transform = transforms.Compose([
-                transforms.ToPILImage(),
-                transforms.RandomHorizontalFlip(),
-            ])
+            transforms.ToPILImage(),
+            transforms.RandomHorizontalFlip(),
+        ])
     else:
         data_transform = transforms.Compose([
-                transforms.ToPILImage(),
-            ])
+            transforms.ToPILImage(),
+        ])
 
     x_val = x_train[-10000:]
     y_val = y_train[-10000:]
@@ -192,8 +189,8 @@ def load_imagenet(resolution, args, **kwargs):
 
     # wget https://pjreddie.com/media/files/imagenet64.tar
     # tar -xf imagenet64.tar
-    trainpath = './data/imagenet{res}/train_{res}x{res}.tar'.format(res=resolution)
-    valpath = './data/imagenet{res}/val_{res}x{res}.tar'.format(res=resolution)
+    trainpath = './data/imagenet{res}/train.tar'.format(res=resolution)
+    valpath = './data/imagenet{res}/val.tar'.format(res=resolution)
 
     trainpath = extract_tar(trainpath)
     valpath = extract_tar(valpath)
@@ -203,9 +200,9 @@ def load_imagenet(resolution, args, **kwargs):
     ])
 
     transform_train = transforms.Compose([
-        transforms.Resize(64), # Take images smaller than 64 and enlarges them
-        transforms.RandomCrop(64, padding=4, padding_mode='edge'), # Take 64x64 crops from 72x72 padding images
-        transforms.RandomHorizontalFlip(), # 50% of time flip image along y-axis
+        transforms.Resize(64),  # Take images smaller than 64 and enlarges them
+        transforms.RandomCrop(64, padding=4, padding_mode='edge'),  # Take 64x64 crops from 72x72 padding images
+        transforms.RandomHorizontalFlip(),  # 50% of time flip image along y-axis
         ToTensorNoNorm()
     ])
 
@@ -257,9 +254,9 @@ def load_tiny_imagenet(resolution, args, **kwargs):
 
     args.input_size = [3, resolution, resolution]
 
-    trainpath   = './data/tiny-imagenet-200/train/'
-    valpath     = './data/tiny-imagenet-200/val/'
-    testpath    = './data/tiny-imagenet-200/test/'
+    trainpath = './data/tiny-imagenet-200/train/'
+    valpath = './data/tiny-imagenet-200/val/'
+    testpath = './data/tiny-imagenet-200/test/'
 
     data_transform = transforms.Compose([
         ToTensorNoNorm()
