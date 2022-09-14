@@ -20,7 +20,7 @@ from utils.load_data import load_dataset
 
 parser = argparse.ArgumentParser(description='PyTorch Discrete Normalizing flows')
 
-parser.add_argument('-d', '--dataset', type=str, default='tiny-imagenet-200',
+parser.add_argument('-d', '--dataset', type=str, default='cifar10',
                     choices=['cifar10', 'imagenet32', 'imagenet64', 'tiny-imagenet-200'],
                     metavar='DATASET',
                     help='Dataset choice.')
@@ -175,7 +175,7 @@ def run(args, kwargs):
         print('\nMODEL SETTINGS: \n', args, '\n', file=ff)
 
     # SAVING
-    torch.save(args, snap_dir + '.config')
+    torch.save(args, snap_dir + 'config')
 
     # ==================================================================================================================
     # LOAD DATA
